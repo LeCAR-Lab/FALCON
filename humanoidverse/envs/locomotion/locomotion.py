@@ -13,7 +13,7 @@ from rich.progress import Progress
 
 from humanoidverse.envs.env_utils.general import class_to_dict
 from isaac_utils.rotations import quat_apply_yaw, wrap_to_pi
-from humanoidverse.envs.legged_base_task.legged_robot_base_ma import LeggedRobotBase
+from humanoidverse.envs.legged_base_task.legged_robot_base import LeggedRobotBase
 
 from scipy.stats import vonmises
 

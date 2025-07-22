@@ -195,9 +195,9 @@ robot:
       shoulder_roll: 60
       shoulder_yaw: 20
       elbow: 60
-      wrist_roll: 4.0
-      wrist_pitch: 4.0
-      wrist_yaw: 4.0
+      wrist_roll: 10.0 # 4.0
+      wrist_pitch: 10.0 # 4.0
+      wrist_yaw: 10.0 # 4.0
 
     damping: # [N*m/rad]  # [N*m*s/rad]
       hip_yaw: 2.5
@@ -213,9 +213,9 @@ robot:
       shoulder_roll: 1.0
       shoulder_yaw: 0.4
       elbow: 1.0
-      wrist_roll: 0.2
-      wrist_pitch: 0.2
-      wrist_yaw: 0.2
+      wrist_roll: 0.5 # 0.2
+      wrist_pitch: 0.5 # 0.2
+      wrist_yaw: 0.5 # 0.2
 
     integral: 
       hip_yaw: 0.0

@@ -29,7 +29,7 @@ algo:
       upper_body: 0.6, # 0.6 for residual, 0.6 for non-residual
     }
 
-    num_learning_iterations: 10000
+    num_learning_iterations: 15000
     init_at_random_ep_len: True
     eval_callbacks: null
 

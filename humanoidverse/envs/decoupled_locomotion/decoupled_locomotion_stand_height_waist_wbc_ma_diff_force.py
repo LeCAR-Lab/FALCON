@@ -33,23 +33,18 @@ class LeggedRobotDecoupledLocomotionStanceHeightWBCForce(LeggedRobotDecoupledLoc
         self.j_left_ee = torch.zeros((self.num_envs, 6, 6+self.num_dofs), device=self.device)
         self.j_right_ee = torch.zeros((self.num_envs, 6, 6+self.num_dofs), device=self.device)
         
-        if self.config.rewards.get("upper_body_motion_scale_curriculum", False):
-            self.action_scale_upper_body = torch.ones(self.num_envs, 1, dtype=torch.float, device=self.device, requires_grad=False) * self.config.rewards.upper_body_motion_initial_scale
-        else:
-            self.action_scale_upper_body = torch.ones(self.num_envs, 1, dtype=torch.float, device=self.device, requires_grad=False)
-        if self.config.rewards.get("command_height_scale_curriculum", False):
-            self.command_height_scale = torch.ones(self.num_envs, 1, dtype=torch.float, device=self.device, requires_grad=False) * self.config.rewards.command_height_scale_initial_scale
-        else:
-            self.command_height_scale = torch.ones(self.num_envs, 1, dtype=torch.float, device=self.device, requires_grad=False)
-        if self.config.rewards.get("force_scale_curriculum", False):
-            self.apply_force_scale = torch.ones(self.num_envs, 1, dtype=torch.float, device=self.device, requires_grad=False) * self.config.rewards.force_scale_initial_scale
-        else:
-            self.apply_force_scale = torch.ones(self.num_envs, 1, dtype=torch.float, device=self.device, requires_grad=False)
         self.zero_tapping_xy_force = self.config.get("zero_tapping_xy_force", False)
         self.joint_effort_limit_scale = self.config.robot.get("dof_effort_limit_scale", 1.0)
         self.joint_effort_limit = torch.tensor(self.config.robot.dof_effort_limit_list[:], 
                                                device=self.device, requires_grad=False) * self.joint_effort_limit_scale
 
+    def _init_curriculum_scales(self):
+        super()._init_curriculum_scales()
+        if self.config.rewards.get("force_scale_curriculum", False):
+            self.apply_force_scale = torch.ones(self.num_envs, 1, dtype=torch.float, device=self.device, requires_grad=False) * self.config.rewards.force_scale_initial_scale
+        else:
+            self.apply_force_scale = torch.ones(self.num_envs, 1, dtype=torch.float, device=self.device, requires_grad=False)
+    
     def _init_force_settings(self):
         # force initialization of value and pos
         self.left_ee_apply_force = torch.zeros((self.num_envs, 3), device=self.device)

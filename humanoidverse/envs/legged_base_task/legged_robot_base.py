@@ -165,15 +165,6 @@ class LeggedRobotBase(BaseTask):
             # reward episode sums
             self.episode_sums = {name: torch.zeros(self.num_envs, dtype=torch.float, device=self.device, requires_grad=False)
                                 for name in self.reward_scales.keys()}
-        
-        # store the reward groups
-        if hasattr(self.config.rewards, "reward_groups"):
-            self.reward_groups = {}
-            groups = self.config.rewards.reward_groups
-            self.reward_group_names = groups.keys()
-            for group_name, group in groups.items():
-                for reward_name in group:
-                    self.reward_groups[reward_name] = group_name
 
     def set_is_evaluating(self):
         logger.info("Setting Env is evaluating")
@@ -474,8 +465,7 @@ class LeggedRobotBase(BaseTask):
             Calls each reward function which had a non-zero scale (processed in self._prepare_reward_function())
             adds each terms to the episode sums and to the total reward
         """
-        self.rew_buf = {key: torch.zeros(self.num_envs, dtype=torch.float, device=self.device, requires_grad=False)
-                        for key in self.reward_group_names}
+        self.rew_buf[:] = 0.
         for i in range(len(self.reward_functions)):
             name = self.reward_names[i]
             rew = self.reward_functions[i]() * self.reward_scales[name]
@@ -487,14 +477,14 @@ class LeggedRobotBase(BaseTask):
             if name in self.config.rewards.reward_penalty_reward_names:
                 if self.config.rewards.reward_penalty_curriculum:
                     rew *= self.reward_penalty_scale
-            self.rew_buf[self.reward_groups[name]] += rew
+            self.rew_buf += rew
             self.episode_sums[name] += rew
         if self.config.rewards.only_positive_rewards:
-            self.rew_buf = {key: torch.clamp(value, min=0.) for key, value in self.rew_buf.items()}
+            self.rew_buf[:] = torch.clip(self.rew_buf[:], min=0.)
         # add termination reward after clipping
         if "termination" in self.reward_scales:
             rew = self._reward_termination() * self.reward_scales["termination"]
-            self.rew_buf[self.reward_groups["termination"]] += rew
+            self.rew_buf += rew
             self.episode_sums["termination"] += rew
 
         if self.use_reward_penalty_curriculum:

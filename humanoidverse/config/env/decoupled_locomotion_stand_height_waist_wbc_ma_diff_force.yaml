@@ -46,7 +46,7 @@ env:
       history_len: 0
     
     # Residual upper body action
-    residual_upper_body_action: True
+    residual_upper_body_action: False
 
     # Force 
     max_force_estimation: True
